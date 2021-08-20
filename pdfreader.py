@@ -37,7 +37,8 @@ def draw_circle(event):
   r = 8
   x,y = event.x, event.y
   canvas.create_oval(x-r, y-r, x+r, y+r, fill="red")
-
+ 
+#self.canvas.find_all() finds all the objects
 
 # Ending of mainloop
 # Drawing lines
