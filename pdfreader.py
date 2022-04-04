@@ -59,7 +59,10 @@ def draw_line(event):
         x1, y1 = canvas.old_coords
         tempid = canvas.create_line(node.x,node.y,x1,y1,width=5, fill='blue')
         edges.append(Edge(node.x,node.y,x1,y1,tempid,node.id ,canvas.old_node_id))
+        canvas.tag_raise(node.id)
+        canvas.tag_raise(canvas.old_node_id)
         canvas.old_coords = None
+        canvas.old_node_id = None
         completed = True
     if abs(x - node.x)^2 + abs(y - node.y)^2 < 8^2 and not completed:
       canvas.old_coords = node.x,node.y
@@ -111,7 +114,18 @@ def write_to_csv(event):
                 los = los.append(df2, ignore_index = True)
     los.drop_duplicates()
     los.to_csv('./csvs/new_los.csv', index=False)
-
+    data = [[0,0,0]]
+    distance = pd.DataFrame(data, columns=['In_Node', 'Visibile', 'Distance (in pixels)'])
+    for node in nodes:
+        for edge in edges:
+            if node.id == edge.nodeid1:
+                df2 = {'In_Node':node.id, 'Visibile':edge.nodeid2, 'Distance (in pixels)':(abs(edge.x1 - edge.x2)^2 + abs(edge.y1 - edge.y2)^2)}
+                distance = distance.append(df2, ignore_index = True)
+            elif node.id == edge.nodeid2:
+                df2 = {'In_Node':node.id, 'Visibile':edge.nodeid1, 'Distance (in pixels)':(abs(edge.x1 - edge.x2)^2 + abs(edge.y1 - edge.y2)^2)}
+                distance = distance.append(df2, ignore_index = True)
+    distance.drop_duplicates()
+    distance.to_csv('./csvs/new_distances.csv', index=False)
 
 # Write CSV
 root.bind('<Enter>', write_to_csv)
